@@ -1,0 +1,18 @@
+<nav class="navbar navbar-expand-lg bg-dark border-bottom border-body" data-bs-theme="dark">
+    <div class="container-fluid">
+        <a class="navbar-brand ml-5 marg-r" href="#" style="color: white;">Simple Student Information System</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-link mr-3" aria-current="page" href="{{ url_for('home_bp.home') }}" style="color: white;">Home</a>
+                <a class="nav-link mr-3" href="{{ url_for('college_bp.college') }}" style="color: white;">College</a>
+
+                # change all course.html to the same syntax as this {{ url_for('college_bp.college') }}
+                <a class="nav-link mr-3" href="/course.html" style="color: white;">Course</a>
+                <a class="nav-link" href="/student.html" style="color: white;">Student</a>
+            </div>
+        </div>
+    </div>
+</nav>
