@@ -4,12 +4,16 @@ from flask import Flask
 # from flask_mysql_connector import MySQL
 # from config import DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HOST, SECRET_KEY
 
-app = Flask(__name__)
-
 def create_app():
-    #app.config.from_object(config)
+    app = Flask(__name__)
+    app.config['SECRET_KEY'] ='lol1412'
 
-    from app.routes.home_bp import home_bp
-    app.register_blueprint(home_bp)
+    from .routes.home_bp import home_bp
+    from .routes.college_bp import college_bp
+    
+
+    app.register_blueprint(home_bp, url_prefix='/')
+    app.register_blueprint(college_bp, url_prefix='/college/')
+    
 
     return app

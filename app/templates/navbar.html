@@ -10,8 +10,8 @@
                 <a class="nav-link mr-3" href="{{ url_for('college_bp.college') }}" style="color: white;">College</a>
 
                 # change all course.html to the same syntax as this {{ url_for('college_bp.college') }}
-                <a class="nav-link mr-3" href="/course.html" style="color: white;">Course</a>
-                <a class="nav-link" href="/student.html" style="color: white;">Student</a>
+                <a class="nav-link mr-3" href="{{ url_for('course_bp.course') }}" style="color: white;">Course</a>
+                <a class="nav-link" href="{{ url_for('student_bp.student') }}" style="color: white;">Student</a>
             </div>
         </div>
     </div>
