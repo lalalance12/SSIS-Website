@@ -5,5 +5,4 @@ course_bp = Blueprint('course_bp', __name__)
 
 @course_bp.route('/course', methods=['GET', 'POST'])
 def course():
-
     return render_template('course.html')

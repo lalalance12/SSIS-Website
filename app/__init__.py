@@ -10,10 +10,14 @@ def create_app():
 
     from .routes.home_bp import home_bp
     from .routes.college_bp import college_bp
+    from .routes.course_bp import course_bp
+    from .routes.student_bp import student_bp
     
 
     app.register_blueprint(home_bp, url_prefix='/')
     app.register_blueprint(college_bp, url_prefix='/college/')
+    app.register_blueprint(course_bp, url_prefix='/course/')
+    app.register_blueprint(student_bp, url_prefix='/student/')
     
 
     return app

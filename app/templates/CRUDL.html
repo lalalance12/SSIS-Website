@@ -6,41 +6,72 @@
         </div>
 
         <div class="col-md-6 text-right">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#C_Add_Modal"" id="addBtn">Add Item</button> 
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#C_Add_Modal"" id="addBtn">Add College</button> 
         </div>
-
-        {% include 'college_add.html' %}
 
     </div>
 
-    <ul class="list-group mb-3">
-        <!-- Example list items -->
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <div>
-                <strong>Item 1 Code:</strong> Code Value 1
-            </div>
-            <div>
-                <strong>Item 1 Name:</strong> Name Value 1
-            </div>
-            <div>
+    <table class="table">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col" class="text-center">Code</th>
+            <th scope="col" class="text-center">Name</th>
+            <th scope="col" class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-center">CCS</td>
+            <td class="text-center">College of Computer Science</td>
+            <td class="text-center">
+              <div class="d-flex justify-content-center">
                 <button class="btn btn-warning btn-sm mr-2">Update</button>
                 <button class="btn btn-danger btn-sm">Delete</button>
-            </div>
-        </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <div>
-                <strong>Item 2 Code:</strong> Code Value 2.
-            </div>
-            <div>
-                <strong>Item 2 Name:</strong> Name Value 2
-            </div>
-            <div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-center">COE</td>
+            <td class="text-center">College of Computer Engineering</td>
+            <td class="text-center">
+              <div class="d-flex justify-content-center">
                 <button class="btn btn-warning btn-sm mr-2">Update</button>
                 <button class="btn btn-danger btn-sm">Delete</button>
-            </div>
-        </li>
-        <!-- Add more list items here -->
-    </ul>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+    </table>
 
     
+</div>
+
+<!-- Add Modal (College) -->
+<div class="modal fade" id="C_Add_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add College</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="collegeCode">College Code</label>
+                        <input type="text" class="form-control" id="collegeCode" placeholder="Enter college code">
+                    </div>
+                    <div class="form-group">
+                        <label for="collegeName">College Name</label>
+                        <input type="text" class="form-control" id="collegeName" placeholder="Enter college name">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success">Save</button>
+            </div>
+        </div>
+    </div>
 </div>
