@@ -20,6 +20,14 @@ class college_model:
         return colleges 
     
     @classmethod
-    def delete_college(cls):
-        cur = mysql.new_cursor(dictionary=True)
-        cur.execute("DELETE FROM College WHERE code")
+    def delete_college(cls, code):
+        try:
+            cur = mysql.new_cursor(dictionary=True)
+            cur.execute("DELETE FROM college WHERE code = %s", (code,))
+            print(f"DELETE FROM college WHERE code = {code}")
+            mysql.connection.commit()
+            return "College deleted successfully"
+        except Exception as e:
+            return f"Failed to create College: {str(e)}"
+
+
