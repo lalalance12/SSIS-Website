@@ -2,13 +2,14 @@
     
     <div class="row">
         <div class="col-md-6">
-            <h1>College List</h1>
+            <h1>List of Colleges</h1>
         </div>
 
         <div class="col-md-6 text-right">
-            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#C_Add_Modal"" id="addBtn">Add College</button> 
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#C_Add_Modal" id="addBtn">
+                Add College
+            </button> 
         </div>
-
     </div>
 
     <table class="table">
@@ -48,30 +49,27 @@
 
 <!-- Add Modal (College) -->
 <div class="modal fade" id="C_Add_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add College</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <label for="collegeCode">College Code</label>
-                        <input type="text" class="form-control" id="collegeCode" placeholder="Enter college code">
-                    </div>
-                    <div class="form-group">
-                        <label for="collegeName">College Name</label>
-                        <input type="text" class="form-control" id="collegeName" placeholder="Enter college name">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success">Save</button>
-            </div>
-        </div>
-    </div>
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Add College</h5>
+          </div>
+          <div class="modal-body">
+              <form method="POST" action="/college" id="college_form">
+                  <div class="form-group">
+                      <label for="collegeCode">College Code</label>
+                      <input type="text" class="form-control" id="code" name="code" placeholder="e.g CCS">
+                  </div>
+                  <div class="form-group">
+                      <label for="collegeName">College Name</label>
+                      <input type="text" class="form-control" id="name" name="name" placeholder="e.g College of Computer Studies">
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">Save</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>  
 </div>

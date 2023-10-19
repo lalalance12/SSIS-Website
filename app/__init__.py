@@ -15,9 +15,9 @@ def create_app():
     
 
     app.register_blueprint(home_bp, url_prefix='/')
-    app.register_blueprint(college_bp, url_prefix='/college/')
-    app.register_blueprint(course_bp, url_prefix='/course/')
-    app.register_blueprint(student_bp, url_prefix='/student/')
+    app.register_blueprint(college_bp, url_prefix='/')
+    app.register_blueprint(course_bp, url_prefix='/')
+    app.register_blueprint(student_bp, url_prefix='/')
     
 
     return app
