@@ -3,7 +3,6 @@ CREATE DATABASE IF NOT EXISTS `web_ssis_database`;
 USE `web_ssis_database`;
 
 
-
 CREATE TABLE IF NOT EXISTS college (
                 'code' VARCHAR(15) NOT NULL PRIMARY KEY,
                 'name' VARCHAR(50) NOT NULL

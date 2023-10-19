@@ -1,18 +1,19 @@
 from flask import Blueprint,render_template,request,redirect 
-from . import college_bp
+from app.models.college_m import college_model
 
 college_bp = Blueprint('college_bp', __name__)
 
 @college_bp.route('/college', methods=['GET', 'POST'])
 def college():
     if request.method == 'POST':
-        # Retrieve form data using request.form
-        college_code = request.form.get('code')
-        college_name = request.form.get('name')
-        # Process the data (e.g., save it to a database)
-        # Redirect to a success page or the same form page
-        return render_template('success.html')  
-    return render_template('college.html')
+        code = request.form.get('code')
+        name = request.form.get('name')
+        college_model.create_college(code, name)
+        print("Successfully created college")
+        
+    colleges = college_model.get_colleges()     
+    print(colleges)
+    return render_template('college.html', colleges=colleges)
 
 
 @college_bp.route('/college/success', methods=['GET'])
