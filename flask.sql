@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS Course (
 
 
 CREATE TABLE IF NOT EXISTS Student (
-                id INT NOT NULL PRIMARY KEY,
+                id VARCHAR(20) NOT NULL PRIMARY KEY,
                 firstname VARCHAR(50) NOT NULL,
                 lastname VARCHAR(50) NOT NULL,
                 course VARCHAR(30) NOT NULL,
