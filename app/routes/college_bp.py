@@ -20,8 +20,9 @@ def college():
 def delete_college(college_code):
     print('Received delete request for college code:', college_code)
     result = college_model.delete_college(college_code)
-    print('Successfully deleted')
-    return jsonify(message=result)
+    response = jsonify(message=result)
+    print('Server response:', response.get_json())  # print the response
+    return response 
 
 @college_bp.route('/college/success', methods=['GET'])
 def success():

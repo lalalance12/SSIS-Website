@@ -149,24 +149,22 @@
 
       function deleteCollege(code) {
         console.log(`/delete_college/${code}`);
-        fetch("/delete_college/" + code, {
-            method: "DELETE",
+        fetch('/delete_college/' + code, {
+            method: 'DELETE'
         })
-        .then(response => response.text())  // get the response text
-        .then(text => {
-            console.log('Response text:', text);  // log the response text
-            return JSON.parse(text);  // parse the text as JSON
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
         })
-        .then(() => window.location.reload())
-        .catch(err => {
-            console.log(err);
-        })
+        .then(data => console.log(data))
+        .catch(error => console.log('There has been a problem with your fetch operation: ', error.message));
+      }
 
       deleteBtn.addEventListener("click", (e) => {
         deleteCollege(deleteBtn.dataset.collegeCode);   
       });
-    }
     </script>
-
 
 {% endblock content %}
