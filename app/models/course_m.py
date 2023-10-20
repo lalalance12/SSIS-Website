@@ -16,9 +16,35 @@ class course_model:
     def get_courses(cls):
         cur = mysql.new_cursor(dictionary=True)
         cur.execute("SELECT * FROM course")
-        course = cur.fetchall()
-        return course
+        courses = cur.fetchall()
+        return courses
 
+    @classmethod
+    def delete_course(cls, code):
+        try:
+            cur = mysql.new_cursor(dictionary=True)
+            cur.execute("DELETE FROM course WHERE code = %s", (code,))
+            mysql.connection.commit()
+            cur.close()
+            return {"success": True, "message": "Course deleted successfully"}
+        except Exception as e:
+            return {"success": False, "message": str(e)}
+
+    @classmethod
+    def update_course(cls, course_code, new_code, new_name, new_college):
+        try:
+            cur = mysql.new_cursor(dictionary=True)
+            cur.execute("UPDATE course SET code = %s, name = %s, college = %s WHERE code = %s", (new_code, new_name, new_college, course_code))
+            mysql.connection.commit()
+            cur.close()
+            return "Course updated successfully"
+        except Exception as e:
+            return f"Failed to update course: {str(e)}"
     
-
-
+    @classmethod
+    def search_courses(cls, search_query):
+        cur = mysql.new_cursor(dictionary=True)
+        cur.execute("SELECT * FROM course WHERE name LIKE %s OR code LIKE %s OR college LIKE %s", (f"%{search_query}%", f"%{search_query}%", f"%{search_query}%"))
+        courses = cur.fetchall()
+        cur.close()
+        return courses

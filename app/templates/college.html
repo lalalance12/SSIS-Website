@@ -10,15 +10,15 @@
                 </div>
             
                 <div class="col-md-4">
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <form method="GET" action="{{ url_for('college_bp.search_college') }}" class="d-flex">
+                        <input class="form-control me-2" type="text" name="search" autocomplete="off" placeholder="Search" aria-label="Search">
                         <button class="btn btn-primary" type="submit">Search</button>
                     </form>
                 </div>
             
                 <div class="col-md-4 text-end">
                     <!-- Button trigger modal for Add Modal (College)-->
-                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#C_Add_Modal" id="addBtn">
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#College_Add_Modal" id="addBtn">
                         Add College
                     </button> 
                 </div>
@@ -39,11 +39,11 @@
                             <td class="text-center">{{ college.name }}</td>
                             <td class="text-center">
                                 <div class="d-flex justify-content-center">
-                                    <!-- Button trigger modal for Update Modal (College)-->
-                                    <button class="btn btn-warning btn-sm mr-2 me-3" data-bs-toggle="modal" data-bs-target="#C_Update_Modal" id="updateBtn">Update</button>
+                                    <!-- Button trigger modal for Update Modal (College) -->
+                                    <button class="btn btn-warning btn-sm mr-2 me-3" data-bs-toggle="modal" data-bs-target="#C_Update_Modal{{ college.code }}">Edit</button>
 
-                                    <!-- Button trigger modal for Delete Modal (College)-->
-                                    <button id="confirmDeleteModal" class="btn btn-danger btn-sm delete-btn" data-bs-toggle="modal" data-bs-target="#C_Delete_Modal" data-college-code="{{ college.code }}">Delete</button>
+                                    <!-- Button trigger modal for Delete (College) -->
+                                    <button class="btn btn-danger btn-sm delete-btn" onclick="confirmDeleteCollege(this)" college-code="{{ college.code }}" csrf-token="{{ csrf_token() }}">Delete</button>
                                 </div>
                             </td>
                         </tr>
@@ -58,20 +58,21 @@
     <!------------------------------------------------------------------------------------------------------------------>
 
     <!-- Add Modal (College) -->
-    <div class="modal fade" id="C_Add_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="College_Add_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Add College</h5>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="{{url_for('college_bp.college')}}" id="college_form">
+                    <form method="POST" action="{{ url_for('college_bp.college') }}" id="college_form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <div class="form-group">
                             <label for="collegeCode">College Code</label>
                             <input type="text" class="form-control" id="code" name="code" autocomplete="off" placeholder="e.g CCS">
                         </div>
                         <div class="form-group">
-                            <label for="collegeName">College Name</label>
+                            <label for "collegeName">College Name</label>
                             <input type="text" class="form-control" id="name" name="name" autocomplete="off" placeholder="e.g College of Computer Studies">
                         </div>
                         <div class="modal-footer">
@@ -85,86 +86,36 @@
     </div>
 
 
-    <!-- Delete Modal (College) -->
-    <div class="modal fade" id="C_Delete_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Delete College</h5>
-              </button>
-            </div>
-            <div class="modal-body">
-              <p>Are you sure you want to delete this college?</p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary"data-bs-dismiss="modal">Close</button>
-              <button id="deleteBtn" type="button" class="btn btn-danger"
-              >Delete</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    
-
-    <!-- Update Modal (College)
-    <div class="modal fade" id="C_Update_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- Update Modal (College) -->
+    {% for college in colleges %}
+    <div class="modal fade" id="C_Update_Modal{{ college.code }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Update College</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Edit College</h5>
                 </div>
                 <div class="modal-body">
-                    <form method="" action="{{url_for('college_bp.college')}}" id="college_form">
+                    <form method="POST" action="{{ url_for('college_bp.update_college', college_code=college.code) }}" id="edit_college_form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <div class="form-group">
                             <label for="collegeCode">College Code</label>
-                            <input type="text" class="form-control" id="code" name="code" autocomplete="off" placeholder="e.g CCS">
+                            <input type="text" class="form-control" name="code" value="{{ college.code }}" autocomplete="off" placeholder="e.g CCS">
                         </div>
                         <div class="form-group">
-                            <label for="collegeName">College Name</label>
-                            <input type="text" class="form-control" id="name" name="name" autocomplete="off" placeholder="e.g College of Computer Studies">
+                            <label for "collegeName">College Name</label>
+                            <input type="text" class="form-control" name="name" value="{{ college.name }}" autocomplete="off" placeholder="e.g College of Computer Studies">
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" form="college_form" class="btn btn-warning">Update</button>
+                            <button type="submit" form="edit_college_form" class="btn btn-warning">Update</button>
                         </div>
                     </form>
                 </div>
             </div>
-        </div>  
-    </div> -->
+        </div>
+    </div>
+    {% endfor %}
 
 
-    <script>
-      const deleteBtn = document.getElementById("deleteBtn");
-
-      const confirmDeleteModals = document.querySelectorAll("#confirmDeleteModal");
-
-      document.addEventListener("DOMContentLoaded", function(e) {
-        confirmDeleteModals.forEach((button) => {
-         button.addEventListener("click", () => {
-           deleteBtn.dataset.collegeCode = button.dataset.collegeCode;
-         })
-        })
-      })
-
-      function deleteCollege(code) {
-        console.log(`/delete_college/${code}`);
-        fetch('/delete_college/' + code, {
-            method: 'DELETE'
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => console.log(data))
-        .catch(error => console.log('There has been a problem with your fetch operation: ', error.message));
-      }
-
-      deleteBtn.addEventListener("click", (e) => {
-        deleteCollege(deleteBtn.dataset.collegeCode);   
-      });
-    </script>
 
 {% endblock content %}

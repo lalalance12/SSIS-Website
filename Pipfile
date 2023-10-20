@@ -8,6 +8,7 @@ flask = "2.3.3"
 python-dotenv = "*"
 flask-mysql-connector = "*"
 werkzeug = "*"
+flask-wtf = "*"
 
 [dev-packages]
 

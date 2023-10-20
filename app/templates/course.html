@@ -10,8 +10,8 @@
             </div>
         
             <div class="col-md-4">
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <form method="GET" action="{{ url_for('course_bp.search_course') }}" class="d-flex">
+                    <input class="form-control me-2" type="text" name="search" autocomplete="off" placeholder="Search" aria-label="Search">
                     <button class="btn btn-primary" type="submit">Search</button>
                 </form>
             </div>
@@ -41,11 +41,11 @@
                         <td class="text-center">{{ course.college }}</td>
                         <td class="text-center">
                             <div class="d-flex justify-content-center">
-                                <!-- Button trigger modal for Update Modal (Course)-->
-                                <button class="btn btn-warning btn-sm mr-2 me-3" data-bs-toggle="modal" data-bs-target="#C_Update_Modal" id="updateBtn">Update</button>
-        
-                                <!-- Button trigger modal for Delete Modal (Course)-->
-                                <button id="confirmDeleteModal" class="btn btn-danger btn-sm delete-btn" data-bs-toggle="modal" data-bs-target="#C_Delete_Modal" data-course-code="{{ course.code }}">Delete</button>
+                                <!-- Button trigger modal for Update Modal (Course) -->
+                                <button class="btn btn-warning btn-sm mr-2 me-3 update-btn" data-bs-toggle="modal" data-bs-target="#UpdateCourseModal{{ course.code }}">Edit</button>
+                    
+                                <!-- Button trigger modal for Delete (Course) -->
+                                <button class="btn btn-danger btn-sm delete-btn" onclick="confirmDeleteCourse(this)" course-code="{{ course.code }}" csrf-token="{{ csrf_token() }}">Delete</button>
                             </div>
                         </td>
                     </tr>
@@ -58,40 +58,81 @@
 <!------------------------------------------------------------------------------------------------------------------>
 <!------------------------------------------------------------------------------------------------------------------>
 
-<!-- Add Modal (College) -->
-<div class="modal fade" id="Course_Add_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add Course</h5>
-            </div>
-            <div class="modal-body">
-                <form method="POST" action="{{ url_for('course_bp.course') }}" id="course_form">
-                    <div class="form-group">
-                        <label for="courseCode">Course Code</label>
-                        <input type="text" class="form-control" id="code" name="code" autocomplete="off" placeholder="e.g BSCS">
-                    </div>
-                    <div class="form-group">
-                        <label for="courseName">Course Name</label>
-                        <input type="text" class="form-control" id="name" name="name" autocomplete="off" placeholder="e.g Bachelor of Science in Computer Science">
-                    </div>
-                    <div class="form-group">
-                        <label for="courseCollege">College</label>
-                        <select class="form-control" id="college" name="college">
-                            <option disabled selected>Select College</option>
-                            {% for college in colleges %}
-                                <option value="{{ college.code }}">{{ college.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" form="course_form" class="btn btn-success">Save</button>
-                    </div>
-                </form>
+    <!-- Add Modal (College) -->
+    <div class="modal fade" id="Course_Add_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Course</h5>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ url_for('course_bp.course') }}" id="course_form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="form-group">
+                            <label for="courseCode">Course Code</label>
+                            <input type="text" class="form-control" id="code" name="code" autocomplete="off" placeholder="e.g BSCS">
+                        </div>
+                        <div class="form-group">
+                            <label for="courseName">Course Name</label>
+                            <input type="text" class="form-control" id="name" name="name" autocomplete="off" placeholder="e.g Bachelor of Science in Computer Science">
+                        </div>
+                        <div class="form-group">
+                            <label for="courseCollege">College</label>
+                            <select class="form-control" id="college" name="college">
+                                <option disabled selected>--Select College--</option>
+                                {% for college in colleges %}
+                                    <option value="{{ college.code }}">{{ college.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" form="course_form" class="btn btn-success">Save</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
-    
+
+    <!-- Update Modal (Course) -->
+    {% for course in courses %}
+    <div class="modal fade" id="UpdateCourseModal{{ course.code }}" tabindex="-1" role="dialog" aria-labelledby="UpdateCourseModalLabel{{ course.code }}" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="UpdateCourseModalLabel{{ course.code }}">Edit Course</h5>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ url_for('course_bp.update_course', course_code=course.code) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="form-group">
+                            <label for="update_code">Course Code</label>
+                            <input type="text" class="form-control" id="update_code" name="code" value="{{ course.code }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="update_name">Course Name</label>
+                            <input type="text" class="form-control" id="update_name" name="name" value="{{ course.name }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="update_college">College</label>
+                            <select class="form-control" id="update_college" name="college">
+                                <option disabled selected>--Select College--</option>
+                                {% for college in colleges %}
+                                    <option value="{{ college.code }}" {% if college.code == course.college %}selected{% endif %}>{{ college.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-warning">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+
 {% endblock content %}

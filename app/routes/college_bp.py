@@ -1,4 +1,4 @@
-from flask import Blueprint,render_template,request,redirect,jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, Blueprint
 from app.models.college_m import college_model
 
 
@@ -18,12 +18,25 @@ def college():
 
 @college_bp.route('/delete_college/<string:college_code>', methods=['DELETE'])
 def delete_college(college_code):
-    print('Received delete request for college code:', college_code)
-    result = college_model.delete_college(college_code)
-    response = jsonify(message=result)
-    print('Server response:', response.get_json())  # print the response
-    return response 
+    if request.method == 'DELETE':
+        result = college_model.delete_college(college_code)
+        response = jsonify(result)
+        return response
 
-@college_bp.route('/college/success', methods=['GET'])
-def success():
-    return render_template('success.html')
+@college_bp.route('/update_college/<string:college_code>', methods=['GET', 'POST'])
+def update_college(college_code):
+    if request.method == 'POST':
+        new_code = request.form.get('code')
+        new_name = request.form.get('name')
+        college_model.update_college(college_code, new_code, new_name)
+        return redirect(url_for('college_bp.college'))
+
+    # Fetch the current college data
+    college = college_model.get_college_by_code(college_code)
+    return render_template('college.html', college=college)
+   
+@college_bp.route('/search_college', methods=['GET'])
+def search_college():
+    search_query = request.args.get('search')
+    colleges = college_model.search_colleges(search_query)
+    return render_template('college.html', colleges=colleges)
