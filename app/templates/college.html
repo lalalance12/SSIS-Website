@@ -4,12 +4,19 @@
      
         <div class="container mt-4">
             
-            <div class="row">
-                <div class="col-md-6">
+            <div class="row my-3">
+                <div class="col-md-4">
                     <h1>List of Colleges</h1>
                 </div>
-
-                <div class="col-md-6 text-right">
+            
+                <div class="col-md-4">
+                    <form class="d-flex" role="search">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </form>
+                </div>
+            
+                <div class="col-md-4 text-end">
                     <!-- Button trigger modal for Add Modal (College)-->
                     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#C_Add_Modal" id="addBtn">
                         Add College
@@ -17,37 +24,36 @@
                 </div>
             </div>
 
-            <table class="table">
-            <thead class="thead-dark">
-                <tr>
-                <th scope="col" class="text-center">Code</th>
-                <th scope="col" class="text-center">Name</th>
-                <th scope="col" class="text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for college in colleges %}
+            <table class="table table-dark">
+                <thead class="thead-dark">
                     <tr>
-                        <td class="text-center">{{ college.code }}</td>
-                        <td class="text-center">{{ college.name }}</td>
-                        <td class="text-center">
-                            <div class="d-flex justify-content-center">
-                                <!-- Button trigger modal for Update Modal (College)-->
-                                <button class="btn btn-warning btn-sm mr-2" data-bs-toggle="modal" data-bs-target="#C_Update_Modal" id="updateBtn">Update</button>
-
-                                <!-- Button trigger modal for Delete Modal (College)-->
-                                <button id="confirmDeleteModal" class="btn btn-danger btn-sm delete-btn" data-bs-toggle="modal" data-bs-target="#C_Delete_Modal" data-college-code="{{ college.code }}">Delete</button>
-                            </div>
-                        </td>
+                    <th scope="col" class="text-center">Code</th>
+                    <th scope="col" class="text-center">Name</th>
+                    <th scope="col" class="text-center">Actions</th>
                     </tr>
-                {% endfor %}
-            </tbody>
+                </thead>
+                <tbody>
+                    {% for college in colleges %}
+                        <tr class="table-light">
+                            <td class="text-center">{{ college.code }}</td>
+                            <td class="text-center">{{ college.name }}</td>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center">
+                                    <!-- Button trigger modal for Update Modal (College)-->
+                                    <button class="btn btn-warning btn-sm mr-2 me-3" data-bs-toggle="modal" data-bs-target="#C_Update_Modal" id="updateBtn">Update</button>
+
+                                    <!-- Button trigger modal for Delete Modal (College)-->
+                                    <button id="confirmDeleteModal" class="btn btn-danger btn-sm delete-btn" data-bs-toggle="modal" data-bs-target="#C_Delete_Modal" data-college-code="{{ college.code }}">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
             </table>    
-        </div
+        </div>
 
 
 
-    <!-- -->
     <!------------------------------------------------------------------------------------------------------------------>
     <!------------------------------------------------------------------------------------------------------------------>
 
@@ -146,12 +152,21 @@
         fetch("/delete_college/" + code, {
             method: "DELETE",
         })
-        // .then(() => window.location.reload());
-      }
+        .then(response => response.text())  // get the response text
+        .then(text => {
+            console.log('Response text:', text);  // log the response text
+            return JSON.parse(text);  // parse the text as JSON
+        })
+        .then(() => window.location.reload())
+        .catch(err => {
+            console.log(err);
+        })
 
       deleteBtn.addEventListener("click", (e) => {
         deleteCollege(deleteBtn.dataset.collegeCode);   
       });
+    }
     </script>
+
 
 {% endblock content %}

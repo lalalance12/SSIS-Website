@@ -1,4 +1,4 @@
-from flask import Blueprint,render_template,request,redirect
+from flask import Blueprint,render_template,request,redirect,jsonify
 from app.models.college_m import college_model
 
 
@@ -21,8 +21,7 @@ def delete_college(college_code):
     print('Received delete request for college code:', college_code)
     result = college_model.delete_college(college_code)
     print('Successfully deleted')
-    return result
-
+    return jsonify(message=result)
 
 @college_bp.route('/college/success', methods=['GET'])
 def success():
