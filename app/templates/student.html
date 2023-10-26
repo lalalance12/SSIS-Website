@@ -1,6 +1,17 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+
+
+    {%for message in get_flashed_messages() %}
+
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+        
+    {% endfor %}
+
     
     <div class="container mt-4">
                 
@@ -20,6 +31,7 @@
                             <option value="course">Course</option>
                             <option value="year">Year</option>
                             <option value="gender">Gender</option>
+                            <option value="college">College</option>
                         </select>
                     </div>
                     <div class="input-group mb-3">
@@ -95,7 +107,7 @@
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="form-group mb-3">
                         <label for="id">Student ID</label>
-                        <input type="text" class="form-control" id="id" name="id" autocomplete="off" placeholder="e.g 2032-1565">
+                        <input type="text" class="form-control" id="id" name="id" autocomplete="off" placeholder="e.g 2032-1565" pattern="20\d{2}-\d{4}">
                     </div>
                     <div class="form-group mb-3">
                         <label for="firstName">First Name</label>
@@ -158,7 +170,7 @@
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <div class="form-group">
                             <label for="update_id">ID</label>
-                            <input type="text" class="form-control" id="update_id" name="id" value="{{ student.id }}">
+                            <input type="text" class="form-control" id="update_id" name="id" value="{{ student.id }}" pattern="20\d{2}-\d{4}">
                         </div>
                         <div class="form-group">
                             <label for="update_firstname">First Name</label>

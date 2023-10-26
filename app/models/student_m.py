@@ -67,6 +67,14 @@ class student_model:
         return students
     
     @classmethod
+    def search_students_by_college(cls, search_query):
+        cur = mysql.new_cursor(dictionary=True)
+        cur.execute("SELECT s.* FROM student s JOIN course c ON s.course = c.code WHERE c.college = %s", (search_query,))
+        students = cur.fetchall()
+        cur.close()
+        return students
+    
+    @classmethod
     def update_student(cls, student_id, new_id, new_firstname, new_lastname, new_course, new_year, new_gender):
         try:
             cur = mysql.new_cursor(dictionary=True)
@@ -77,3 +85,13 @@ class student_model:
         except Exception as e:
             return f"Failed to update student"
 
+    @classmethod
+    def delete_student(cls, student_id):
+        try:
+            cur = mysql.new_cursor(dictionary=True)
+            cur.execute("DELETE FROM student WHERE id = %s", (student_id,))
+            mysql.connection.commit()
+            cur.close()
+            return {"success": True, "message": "Course deleted successfully"}
+        except Exception as e:
+            return {"success": False, "message": str(e)}
