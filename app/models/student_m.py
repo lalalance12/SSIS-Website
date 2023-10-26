@@ -19,32 +19,49 @@ class student_model:
         return course
     
     @classmethod
-    def delete_student(cls, student_id):
-        try:
-            cur = mysql.new_cursor(dictionary=True)
-            cur.execute("DELETE FROM student WHERE id = %s", (student_id,))
-            mysql.connection.commit()
-            cur.close()
-            return {"success": True, "message": "Student deleted successfully"}
-        except Exception as e:
-            return {"success": False, "message": str(e)}
-        
+    def search_students_by_id(cls, search_query):
+        cur = mysql.new_cursor(dictionary=True)
+        cur.execute("SELECT * FROM student WHERE id LIKE %s", (f"%{search_query}%",))
+        students = cur.fetchall()
+        cur.close()
+        return students
 
     @classmethod
-    def update_student(cls, student_id, new_id, new_firstname, new_lastname, new_course, new_year, new_gender):
-        try:
-            cur = mysql.new_cursor(dictionary=True)
-            cur.execute("UPDATE student SET id = %s, firstname = %s, lastname = %s, course = %s, year = %s, gender = %s WHERE id = %s",(new_id, new_firstname, new_lastname, new_course, new_year, new_gender, student_id))
-            mysql.connection.commit()
-            cur.close()
-            return "Student updated successfully"
-        except Exception as e:
-            return f"Failed to update student: {str(e)}"
-        
-    @classmethod
-    def search_students(cls, search_query):
+    def search_students_by_firstname(cls, search_query):
         cur = mysql.new_cursor(dictionary=True)
-        cur.execute("SELECT * FROM student WHERE id LIKE %s OR firstname LIKE %s OR lastname LIKE %s OR course LIKE %s OR year LIKE %s OR gender LIKE %s", (f"%{search_query}%", f"%{search_query}%", f"%{search_query}%", f"%{search_query}%", f"%{search_query}%", f"%{search_query}%"))
+        cur.execute("SELECT * FROM student WHERE firstname LIKE %s", (f"%{search_query}%",))
+        students = cur.fetchall()
+        cur.close()
+        return students
+
+    @classmethod
+    def search_students_by_lastname(cls, search_query):
+        cur = mysql.new_cursor(dictionary=True)
+        cur.execute("SELECT * FROM student WHERE lastname LIKE %s", (f"%{search_query}%",))
+        students = cur.fetchall()
+        cur.close()
+        return students
+
+    @classmethod
+    def search_students_by_course(cls, search_query):
+        cur = mysql.new_cursor(dictionary=True)
+        cur.execute("SELECT * FROM student WHERE course LIKE %s", (f"%{search_query}%",))
+        students = cur.fetchall()
+        cur.close()
+        return students
+
+    @classmethod
+    def search_students_by_year(cls, search_query):
+        cur = mysql.new_cursor(dictionary=True)
+        cur.execute("SELECT * FROM student WHERE year LIKE %s", (f"%{search_query}%",))
+        students = cur.fetchall()
+        cur.close()
+        return students
+
+    @classmethod
+    def search_students_by_gender(cls, search_query):
+        cur = mysql.new_cursor(dictionary=True)
+        cur.execute("SELECT * FROM student WHERE gender LIKE %s", (f"%{search_query}%",))
         students = cur.fetchall()
         cur.close()
         return students

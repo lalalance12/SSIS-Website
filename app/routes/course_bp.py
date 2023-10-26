@@ -41,5 +41,17 @@ def update_course(course_code):
 @course_bp.route('/search_course', methods=['GET'])
 def search_course():
     search_query = request.args.get('search')
-    courses = course_model.search_courses(search_query)
-    return render_template('course.html', courses=courses)
+    filter_by = request.args.get('filter_by')
+    
+    colleges = college_model.get_colleges()
+
+    if filter_by == 'code':
+        courses = course_model.search_courses_by_code(search_query)
+    elif filter_by == 'name':
+        courses = course_model.search_courses_by_name(search_query)
+    elif filter_by == 'college':
+        courses = course_model.search_courses_by_college(search_query)
+    else:
+        courses = course_model.get_courses()
+    
+    return render_template('course.html', courses=courses, colleges=colleges)

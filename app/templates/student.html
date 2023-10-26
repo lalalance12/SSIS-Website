@@ -9,14 +9,29 @@
                 <h1>List of Students</h1>
             </div>
         
-            <div class="col-md-4">
+            <div class="col-md-5">
                 <form method="GET" action="{{ url_for('student_bp.search_student') }}" class="d-flex">
-                    <input class="form-control me-2" type="text" name="search" autocomplete="off" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-primary" type="submit">Search</button>
+                    <div class="input-group mb-3 me-3 w-75 p-0">
+                        <label class="input-group-text" for="filter_by">Filter by</label>
+                        <select class="form-select form-control-sm" id="filter_by" name="filter_by">
+                            <option value="id">ID</option>
+                            <option value="firstname">First Name</option>
+                            <option value="lastname">Last Name</option>
+                            <option value="course">Course</option>
+                            <option value="year">Year</option>
+                            <option value="gender">Gender</option>
+                        </select>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input class="form-control me-2" type="text" name="search" autocomplete="off" placeholder="Search" aria-label="Search">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">Search</button>
+                        </div>
+                    </div>
                 </form>
             </div>
         
-            <div class="col-md-4 text-end">
+            <div class="col-md-3 text-end">
                 <!-- Button trigger modal for Add Modal (Student)-->
                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#Student_Add_Modal" id="addBtn">
                     Add Student

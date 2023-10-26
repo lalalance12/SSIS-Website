@@ -48,9 +48,28 @@ def update_student(student_id):
 
 @student_bp.route('/search_student', methods=['GET', 'POST'])
 def search_student():
+    courses = course_model.get_courses()
+
     if request.method == 'POST':
         search_query = request.form.get('search')
+        filter_by = request.form.get('filter_by')
     else:
         search_query = request.args.get('search')
-    students = student_model.search_students(search_query)
-    return render_template('student.html', students=students)
+        filter_by = request.args.get('filter_by')
+    
+    if filter_by == 'id':
+        students = student_model.search_students_by_id(search_query)
+    elif filter_by == 'firstname':
+        students = student_model.search_students_by_firstname(search_query)
+    elif filter_by == 'lastname':
+        students = student_model.search_students_by_lastname(search_query)
+    elif filter_by == 'course':
+        students = student_model.search_students_by_course(search_query)
+    elif filter_by == 'year':
+        students = student_model.search_students_by_year(search_query)
+    elif filter_by == 'gender':
+        students = student_model.search_students_by_gender(search_query)
+    else:
+        students = student_model.get_students()
+    
+    return render_template('student.html', students=students, courses=courses)

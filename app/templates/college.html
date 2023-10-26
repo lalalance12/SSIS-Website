@@ -8,15 +8,26 @@
                 <div class="col-md-4">
                     <h1>List of Colleges</h1>
                 </div>
-            
-                <div class="col-md-4">
+                
+                <div class="col-md-5">
                     <form method="GET" action="{{ url_for('college_bp.search_college') }}" class="d-flex">
-                        <input class="form-control me-2" type="text" name="search" autocomplete="off" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-primary" type="submit">Search</button>
+                        <div class="input-group mb-3 me-3 w-75 p-0">
+                            <label class="input-group-text" for="filter_by">Filter by</label>
+                            <select class="form-select form-control-sm" id="filter_by" name="filter_by">
+                                <option value="code">Code</option>
+                                <option value="name">Name</option>
+                            </select>
+                        </div>
+                        <div class="input-group mb-3">
+                            <input class="form-control me-2" type="text" name="search" autocomplete="off" placeholder="Search" aria-label="Search">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">Search</button>
+                            </div>
+                        </div>
                     </form>
                 </div>
             
-                <div class="col-md-4 text-end">
+                <div class="col-md-3 text-end">
                     <!-- Button trigger modal for Add Modal (College)-->
                     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#College_Add_Modal" id="addBtn">
                         Add College

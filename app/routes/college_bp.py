@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify, Blueprint
+from flask import Flask, render_template, request, redirect, url_for, jsonify, Blueprint, flash
 from app.models.college_m import college_model
 
 
@@ -38,5 +38,11 @@ def update_college(college_code):
 @college_bp.route('/search_college', methods=['GET'])
 def search_college():
     search_query = request.args.get('search')
-    colleges = college_model.search_colleges(search_query)
+    filter_by = request.args.get('filter_by')
+    
+    if filter_by == 'code':
+        colleges = college_model.search_colleges_by_code(search_query)
+    else:
+        colleges = college_model.search_colleges_by_name(search_query)
+    
     return render_template('college.html', colleges=colleges)

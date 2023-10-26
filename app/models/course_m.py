@@ -42,9 +42,25 @@ class course_model:
             return f"Failed to update course: {str(e)}"
     
     @classmethod
-    def search_courses(cls, search_query):
+    def search_courses_by_code(cls, search_query):
         cur = mysql.new_cursor(dictionary=True)
-        cur.execute("SELECT * FROM course WHERE name LIKE %s OR code LIKE %s OR college LIKE %s", (f"%{search_query}%", f"%{search_query}%", f"%{search_query}%"))
+        cur.execute("SELECT * FROM course WHERE code LIKE %s", (f"%{search_query}%",))
+        courses = cur.fetchall()
+        cur.close()
+        return courses
+
+    @classmethod
+    def search_courses_by_name(cls, search_query):
+        cur = mysql.new_cursor(dictionary=True)
+        cur.execute("SELECT * FROM course WHERE name LIKE %s", (f"%{search_query}%",))
+        courses = cur.fetchall()
+        cur.close()
+        return courses
+
+    @classmethod
+    def search_courses_by_college(cls, search_query):
+        cur = mysql.new_cursor(dictionary=True)
+        cur.execute("SELECT * FROM course WHERE college LIKE %s", (f"%{search_query}%",))
         courses = cur.fetchall()
         cur.close()
         return courses

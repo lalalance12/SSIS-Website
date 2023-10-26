@@ -53,9 +53,17 @@ class college_model:
         return college
     
     @classmethod
-    def search_colleges(cls, search_query):
+    def search_colleges_by_code(cls, search_query):
         cur = mysql.new_cursor(dictionary=True)
-        cur.execute("SELECT * FROM college WHERE name LIKE %s OR code LIKE %s", (f"%{search_query}%", f"%{search_query}%"))
+        cur.execute("SELECT * FROM college WHERE code LIKE %s", (f"%{search_query}%",))
+        colleges = cur.fetchall()
+        cur.close()
+        return colleges
+
+    @classmethod
+    def search_colleges_by_name(cls, search_query):
+        cur = mysql.new_cursor(dictionary=True)
+        cur.execute("SELECT * FROM college WHERE name LIKE %s", (f"%{search_query}%",))
         colleges = cur.fetchall()
         cur.close()
         return colleges
