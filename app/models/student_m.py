@@ -65,3 +65,15 @@ class student_model:
         students = cur.fetchall()
         cur.close()
         return students
+    
+    @classmethod
+    def update_student(cls, student_id, new_id, new_firstname, new_lastname, new_course, new_year, new_gender):
+        try:
+            cur = mysql.new_cursor(dictionary=True)
+            cur.execute("UPDATE student SET id=%s, firstname=%s, lastname=%s, course=%s, year=%s, gender=%s WHERE id=%s",
+                        (new_id, new_firstname, new_lastname, new_course, new_year, new_gender, student_id))
+            mysql.connection.commit()
+            return "Student updated successfully"
+        except Exception as e:
+            return f"Failed to update student"
+
