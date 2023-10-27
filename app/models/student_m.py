@@ -1,15 +1,28 @@
 from app import mysql
+from flask import flash
 
 class student_model:
     @classmethod
     def create_student(cls, id, firstname, lastname, course, year, gender):
         try:
             cur = mysql.new_cursor(dictionary=True)
-            cur.execute("INSERT INTO student (id, firstname, lastname, course, year, gender) VALUES (%s,%s,%s,%s,%s,%s )",(id, firstname, lastname, course, year, gender))
+
+            # Check if the ID is already taken
+            cur.execute("SELECT id FROM student WHERE id = %s", (id,))
+            existing_id = cur.fetchone()
+            if existing_id:
+                flash("ID is already taken.", "error")
+                return "Failed to create student"
+
+            # Insert the new student record
+            cur.execute("INSERT INTO student (id, firstname, lastname, course, year, gender) VALUES (%s, %s, %s, %s, %s, %s)",
+                        (id, firstname, lastname, course, year, gender))
             mysql.connection.commit()
+            flash("Student created successfully.", "success")
             return "Student created successfully"
         except Exception as e:
-            return f"Failed to create student"
+            flash("Failed to create student.", "error")
+            return "Failed to create student"
     
     @classmethod
     def get_students(cls):
@@ -78,12 +91,23 @@ class student_model:
     def update_student(cls, student_id, new_id, new_firstname, new_lastname, new_course, new_year, new_gender):
         try:
             cur = mysql.new_cursor(dictionary=True)
+
+            # Check if the new ID is already taken (excluding the current student's ID)
+            cur.execute("SELECT id FROM student WHERE id = %s AND id != %s", (new_id, student_id))
+            existing_id = cur.fetchone()
+            if existing_id:
+                flash("ID is already taken.", "error")
+                return "Failed to update student"
+
+            # Update the student record
             cur.execute("UPDATE student SET id=%s, firstname=%s, lastname=%s, course=%s, year=%s, gender=%s WHERE id=%s",
                         (new_id, new_firstname, new_lastname, new_course, new_year, new_gender, student_id))
             mysql.connection.commit()
+            flash("Student updated successfully.", "success")
             return "Student updated successfully"
         except Exception as e:
-            return f"Failed to update student"
+            flash("Failed to update student.", "error")
+            return "Failed to update student"
 
     @classmethod
     def delete_student(cls, student_id):
