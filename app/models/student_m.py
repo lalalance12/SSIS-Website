@@ -18,7 +18,6 @@ class student_model:
             cur.execute("INSERT INTO student (id, firstname, lastname, course, year, gender) VALUES (%s, %s, %s, %s, %s, %s)",
                         (id, firstname, lastname, course, year, gender))
             mysql.connection.commit()
-            flash("Student created successfully.", "success")
             return "Student created successfully"
         except Exception as e:
             flash("Failed to create student.", "error")
@@ -27,7 +26,7 @@ class student_model:
     @classmethod
     def get_students(cls):
         cur = mysql.new_cursor(dictionary=True)
-        cur.execute("SELECT * FROM student")
+        cur.execute("SELECT s.*, col.name AS college_name, col.code AS college_code FROM student s JOIN course c ON s.course = c.code INNER JOIN college col ON c.college = col.code")
         course = cur.fetchall()
         return course
     
@@ -82,7 +81,7 @@ class student_model:
     @classmethod
     def search_students_by_college(cls, search_query):
         cur = mysql.new_cursor(dictionary=True)
-        cur.execute("SELECT s.* FROM student s JOIN course c ON s.course = c.code WHERE c.college = %s", (search_query,))
+        cur.execute("SELECT s.*, col.name AS college_name, col.code AS college_code FROM student s JOIN course c ON s.course = c.code INNER JOIN college col ON c.college = col.code WHERE c.college = %s", (search_query,))
         students = cur.fetchall()
         cur.close()
         return students
@@ -103,10 +102,8 @@ class student_model:
             cur.execute("UPDATE student SET id=%s, firstname=%s, lastname=%s, course=%s, year=%s, gender=%s WHERE id=%s",
                         (new_id, new_firstname, new_lastname, new_course, new_year, new_gender, student_id))
             mysql.connection.commit()
-            flash("Student updated successfully.", "success")
             return "Student updated successfully"
         except Exception as e:
-            flash("Failed to update student.", "error")
             return "Failed to update student"
 
     @classmethod

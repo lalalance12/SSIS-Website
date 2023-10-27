@@ -28,6 +28,7 @@ def student():
 def delete_student(student_id):
     try:
         result = student_model.delete_student(student_id)
+        flash("Student is deleted")
         return jsonify(result)
     except Exception as e:
         return jsonify({"success": False, "message": str(e)})\
