@@ -2,7 +2,7 @@ from flask import Flask
 from flask_mysql_connector import MySQL
 from config import DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HOST, SECRET_KEY
 from flask_wtf.csrf import CSRFProtect
-from wtforms.validators import DataRequired
+
 
 mysql = MySQL()
 

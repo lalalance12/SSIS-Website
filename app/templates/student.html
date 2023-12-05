@@ -123,7 +123,7 @@
                     </div>
                     <div class="form-group mb-3">
                         <label for="course">Course</label>
-                        <select class="form-control" id="course" name="course">
+                        <select class="form-select" id="course" name="course">
                             <option disabled selected>--Select Course--</option>
                             {% for course in courses %}
                                 <option value="{{ course.code }}">{{ course.name }}</option>
@@ -132,7 +132,7 @@
                     </div>
                     <div class="form-group mb-3">
                         <label for="year">Year</label>
-                        <select class="form-control" id="year" name="year">
+                        <select class="form-select" id="year" name="year">
                             <option disabled selected>--Select Year--</option>
                             <option value="1st year">1st year</option>
                             <option value="2nd year">2nd year</option>
@@ -144,7 +144,7 @@
                     </div>
                     <div class="form-group mb-3">
                         <label for="gender">Gender</label>
-                        <select class="form-control" id="gender" name="gender">
+                        <select class="form-select" id="gender" name="gender">
                             <option disabled selected>--Select Gender--</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
@@ -195,7 +195,7 @@
                         </div>
                         <div class="form-group">
                             <label for="update_year">Year</label>
-                            <select class="form-control" id="update_year" name="year">
+                            <select class="form-select" id="update_year" name="year">
                                 <option disabled selected>--Select Year--</option>
                                 <option value="1st year" {% if student.year == "1st year" %}selected{% endif %}>1st year</option>
                                 <option value="2nd year" {% if student.year == "2nd year" %}selected{% endif %}>2nd year</option>
@@ -206,7 +206,7 @@
                         </div>
                         <div class="form-group">
                             <label for="update_gender">Gender</label>
-                            <select class="form-control" id="update_gender" name="gender">
+                            <select class="form-select" id="update_gender" name="gender">
                                 <option disabled selected>--Select Gender--</option>
                                 <option value="male" {% if student.gender == "male" %}selected{% endif %}>Male</option>
                                 <option value="female" {% if student.gender == "female" %}selected{% endif %}>Female</option>
