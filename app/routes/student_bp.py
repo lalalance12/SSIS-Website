@@ -1,7 +1,6 @@
-from flask import Blueprint,render_template,request,jsonify,flash
+from flask import Blueprint,render_template,request,jsonify,flash,redirect,url_for
 from app.models.course_m import course_model
 from app.models.student_m import student_model
-import re
 
 student_bp = Blueprint('student_bp', __name__)
 
@@ -10,34 +9,38 @@ def student():
     courses = course_model.get_courses()
 
     if request.method == 'POST':
-        student_data = {
-            'id': request.form.get('id'),
-            'firstname': request.form.get('firstname'),
-            'lastname': request.form.get('lastname'),
-            'course': request.form.get('course'),
-            'year': request.form.get('year'),
-            'gender': request.form.get('gender'),
-            'image_url': None
-        }
+        # Extract form data
+        id = request.form.get('id')
+        firstname = request.form.get('firstname')
+        lastname = request.form.get('lastname')
+        course = request.form.get('course')
+        year = request.form.get('year')
+        gender = request.form.get('gender')
+
         # Handle image upload to Cloudinary
+        image_url = None
         if 'image' in request.files:
             image = request.files['image']
             if image.filename != '':
-                # Process the uploaded image and obtain the URL from Cloudinary
+                # Attempt to upload the image
                 image_url = student_model.upload_image(image)
-                student_data['image_url'] = image_url
 
+                # If the image upload fails (returns None), flash an error and do not create the student
+                if image_url is None:
+                    return redirect(request.url)
 
         # Set the default image URL
         default_image_url = "https://res.cloudinary.com/dxh52itfg/image/upload/v1701915988/SSIS/hjpg2poologu9vx1zxkj.jpg"
-        if student_data['image_url'] is None:
-            student_data['image_url'] = default_image_url
+        if image_url is None:
+            image_url = default_image_url
 
-    
-        if student_model.add_student(**student_data) == "Student created successfully":
+        # Attempt to add the student
+        result = student_model.add_student(id, firstname, lastname, course, year, gender, image_url)
+        
+        if result == "Student created successfully":
             flash("Student created successfully!")
         else:
-            flash("Failed to create student! (BLUEPRINT FAILED MESSAGE)")
+            flash("Failed to create student!", "error")
 
     students = student_model.get_students()
     return render_template('student.html', students=students, courses=courses)
@@ -60,14 +63,25 @@ def update_student(student_id):
     new_year = request.form['year']
     new_gender = request.form['gender']
 
-    if student_model.update_student(student_id, new_id, new_firstname, new_lastname, new_course, new_year, new_gender) == "Student updated successfully":
+    # Get the existing student data
+    existing_student = student_model.get_student_by_id(student_id)
+
+    if 'image' in request.files:
+        new_image = request.files['image']
+        if new_image.filename != '':
+            new_image_url = student_model.upload_image(new_image)
+        else:
+            new_image_url = existing_student.get('image_url')
+    else:
+        new_image_url = existing_student.get('image_url')
+
+    if student_model.update_student(student_id, new_id, new_firstname, new_lastname, new_course, new_year, new_gender, new_image_url) == "Student updated successfully":
         flash("Student updated successfully!")
     else:
-        flash("Failed to update student!")
+        None
 
-    students = student_model.get_students()
-    courses = course_model.get_courses()
-    return render_template('student.html', students=students, courses=courses)
+    # Redirect to the updated student page or wherever needed
+    return redirect(url_for('student_bp.student', student_id=student_id))
 
 
 @student_bp.route('/search_student', methods=['GET', 'POST'])

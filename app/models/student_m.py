@@ -18,13 +18,6 @@ class student_model:
                 flash("ID is already taken.", "error")
                 return "Failed to create student"
 
-            # Set the default image URL
-            default_image_url = "https://res.cloudinary.com/dxh52itfg/image/upload/v1701915988/SSIS/hjpg2poologu9vx1zxkj.jpg"
-            
-            # Use the default image URL if the user did not upload a image
-            if image_url is None:
-                image_url = default_image_url
-
             # Insert the new student record
             cur.execute("INSERT INTO student (id, firstname, lastname, course, year, gender, image_url) VALUES (%s, %s, %s, %s, %s, %s, %s)",
                         (id, firstname, lastname, course, year, gender, image_url))
@@ -39,23 +32,34 @@ class student_model:
     @classmethod
     def upload_image(cls,image):
         try:
-            # Ensure the file is allowed
+            # Check if the file has an allowed extension
             allowed_extensions = {'png', 'jpg', 'jpeg'}
             if '.' in image.filename and image.filename.rsplit('.', 1)[1].lower() in allowed_extensions:
-                # Generate a secure filename
-                filename = secure_filename(image.filename)
+                # Check if the file size is 1MB or less
+                max_file_size_mb = 1.0
+                max_file_size_bytes = max_file_size_mb * 1024 * 1024  # 1MB = 1024KB = 1024 * 1024 bytes
 
-                # Upload the file to Cloudinary
-                response = uploader.upload(image, folder=CLOUDINARY_FOLDER)  # Set the folder as needed
+                if len(image.read()) <= max_file_size_bytes:
+                    # Reset the file pointer to the beginning for uploading
+                    image.seek(0)
 
-                # Return the Cloudinary URL of the uploaded image
-                return response['secure_url']
+                    # Generate a secure filename
+                    filename = secure_filename(image.filename)
 
-            flash("Invalid file type. Please upload a valid image file.", "error")
-            return None
+                    # Upload the file to Cloudinary
+                    response = uploader.upload(image, folder=CLOUDINARY_FOLDER)  # Set the folder as needed
+
+                    # Return the Cloudinary URL of the uploaded image
+                    return response['secure_url']
+                else:
+                    flash("File size exceeds the maximum allowed limit (1MB).", "error")
+                    return None
+            else:
+                flash("Invalid file type. Please upload a valid image file (allowed types: png, jpg, jpeg).", "error")
+                return None
 
         except Exception as e:
-            flash("Failed to upload image.", "error")
+            flash("Failed to upload image. Please try again.", "error")
             return None
         
     @classmethod
@@ -122,7 +126,7 @@ class student_model:
         return students
     
     @classmethod
-    def update_student(cls, student_id, new_id, new_firstname, new_lastname, new_course, new_year, new_gender):
+    def update_student(cls, student_id, new_id, new_firstname, new_lastname, new_course, new_year, new_gender, new_image_url):
         try:
             cur = mysql.new_cursor(dictionary=True)
 
@@ -134,13 +138,25 @@ class student_model:
                 return "Failed to update student"
 
             # Update the student record
-            cur.execute("UPDATE student SET id=%s, firstname=%s, lastname=%s, course=%s, year=%s, gender=%s WHERE id=%s",
-                        (new_id, new_firstname, new_lastname, new_course, new_year, new_gender, student_id))
+            cur.execute("UPDATE student SET id=%s, firstname=%s, lastname=%s, course=%s, year=%s, gender=%s, image_url=%s WHERE id=%s",
+                        (new_id, new_firstname, new_lastname, new_course, new_year, new_gender, new_image_url, student_id))
             mysql.connection.commit()
             return "Student updated successfully"
         except Exception as e:
             return "Failed to update student"
 
+    @classmethod
+    def get_student_by_id(cls, student_id):
+        try:
+            cur = mysql.new_cursor(dictionary=True)
+            cur.execute("SELECT * FROM student WHERE id = %s", (student_id,))
+            student = cur.fetchone()
+            cur.close()
+            return student
+        except Exception as e:
+            flash("Failed to get student by ID.", "error")
+            return None
+        
     @classmethod
     def delete_student(cls, student_id):
         try:
