@@ -1,6 +1,7 @@
 from flask import Blueprint,render_template,request,jsonify,flash
 from app.models.course_m import course_model
 from app.models.student_m import student_model
+import re
 
 student_bp = Blueprint('student_bp', __name__)
 
@@ -9,17 +10,34 @@ def student():
     courses = course_model.get_courses()
 
     if request.method == 'POST':
-        id = request.form.get('id')
-        firstname = request.form.get('firstname')
-        lastname = request.form.get('lastname')
-        course = request.form.get('course')
-        year = request.form.get('year')
-        gender = request.form.get('gender')
-        
-        if student_model.create_student(id, firstname, lastname, course, year, gender) == "Student created successfully":
+        student_data = {
+            'id': request.form.get('id'),
+            'firstname': request.form.get('firstname'),
+            'lastname': request.form.get('lastname'),
+            'course': request.form.get('course'),
+            'year': request.form.get('year'),
+            'gender': request.form.get('gender'),
+            'image_url': None
+        }
+        # Handle image upload to Cloudinary
+        if 'image' in request.files:
+            image = request.files['image']
+            if image.filename != '':
+                # Process the uploaded image and obtain the URL from Cloudinary
+                image_url = student_model.upload_image(image)
+                student_data['image_url'] = image_url
+
+
+        # Set the default image URL
+        default_image_url = "https://res.cloudinary.com/dxh52itfg/image/upload/v1701915988/SSIS/hjpg2poologu9vx1zxkj.jpg"
+        if student_data['image_url'] is None:
+            student_data['image_url'] = default_image_url
+
+    
+        if student_model.add_student(**student_data) == "Student created successfully":
             flash("Student created successfully!")
         else:
-            flash("Failed to create student!")
+            flash("Failed to create student! (BLUEPRINT FAILED MESSAGE)")
 
     students = student_model.get_students()
     return render_template('student.html', students=students, courses=courses)

@@ -54,6 +54,7 @@
         <table class="table table-dark">
             <thead class="thead-dark">
                 <tr>
+                    <th scope="col" class="text-center">Image</th>
                     <th scope="col" class="text-center">Id</th>
                     <th scope="col" class="text-center">First Name</th>
                     <th scope="col" class="text-center">Last Name</th>
@@ -68,17 +69,20 @@
 
                 {% for student in students %}
                     <tr class="table-light">
-                        <td class="text-center">{{ student.id }}</td>
-                        <td class="text-center">{{ student.firstname }}</td>
-                        <td class="text-center">{{ student.lastname }}</td>
-                        <td class="text-center">{{ student.course }}</td>
-                        <td class="text-center">{{ student.year }}</td>
-                        <td class="text-center">{{ student.gender }}</td>
-                        <td class="text-center">
+                        <td class="text-center">   
+                            <img src="{{ student.image_url }}" alt="Student Image" class="student-image" width="50px">
+                        </td>
+                        <td class="text-center align-middle">{{ student.id }}</td>
+                        <td class="text-center align-middle">{{ student.firstname }}</td>
+                        <td class="text-center align-middle">{{ student.lastname }}</td>
+                        <td class="text-center align-middle">{{ student.course }}</td>
+                        <td class="text-center align-middle">{{ student.year }}</td>
+                        <td class="text-center align-middle">{{ student.gender }}</td>
+                        <td class="text-center align-middle">
                             {{ student.college_name }} ({{ student.college_code }})
                         </td>
 
-                        <td class="text-center">
+                        <td class="text-center align-middle">
                             <div class="d-flex justify-content-center">
                                 <!-- Button trigger modal for Update Modal (Student) -->
                                 <button class="btn btn-warning btn-sm mr-2 me-3" data-bs-toggle="modal" data-bs-target="#UpdateStudentModal{{ student.id }}">Edit</button>
@@ -94,135 +98,247 @@
             </tbody>
         </table>
 
-
+        
 
 <!------------------------------------------------------------------------------------------------------------------>
 <!------------------------------------------------------------------------------------------------------------------>
 
     <!-- Add Modal (Student) -->
     <div class="modal fade" id="Student_Add_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add Student</h5>
-            </div>
-            <div class="modal-body">
-                <form method="POST" action="{{ url_for('student_bp.student') }}" id="student_form">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <div class="form-group mb-3">
-                        <label for="id">Student ID</label>
-                        <input type="text" class="form-control" id="id" name="id" autocomplete="off" placeholder="20XX-XXXX" pattern="20\d{2}-\d{4}">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Student</h5>
+                </div>
+                <div class="modal-body">
+
+                    <!-- Pagination Container -->
+                    <div class="pagination-container">
+                        <!-- Form Starts Here -->
+                        <form method="POST" action="{{ url_for('student_bp.student') }}" id="student_form" enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    
+                            <!-- Page 1: Student Information -->
+                            <div class="page" id="page1">
+                                <div class="form-group mb-3">
+                                    <label for="id">Student ID</label>
+                                    <input type="text" class="form-control" id="id" name="id" autocomplete="off" placeholder="20XX-XXXX" pattern="20\d{2}-\d{4}" required>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="firstName">First Name</label>
+                                    <input type="text" class="form-control" id="firstName" name="firstname" autocomplete="off" placeholder="e.g Ethan" required>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="lastName">Last Name</label>
+                                    <input type="text" class="form-control" id="lastName" name="lastname" autocomplete="off" placeholder="e.g Grunt" required>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="course">Course</label>
+                                    <select class="form-select" id="course" name="course" required>
+                                        <option disabled selected value="">--Select Course--</option>
+                                        {% for course in courses %}
+                                            <option value="{{ course.code }}">{{ course.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="year">Year</label>
+                                    <select class="form-select" id="year" name="year" required>
+                                        <option disabled selected value="">--Select Year--</option>
+                                        <option value="1st year">1st year</option>
+                                        <option value="2nd year">2nd year</option>
+                                        <option value="3rd year">3rd year</option>
+                                        <option value="4th year">4th year</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="gender">Gender</label>
+                                    <select class="form-select" id="gender" name="gender" required>
+                                        <option disabled selected value="">--Select Gender--</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>   
+                                    </select>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" onclick="showPage(2)">Next</button>
+                                </div>
+
+                            </div>
+
+                            <!-- Page 2: Image Input -->
+                            <div class="page" id="page2" style="display: none;">
+                                <div class="mb-3 text-center">
+                                    <label for="image">Image</label>
+                                </div>
+                                <div class="mb-3 d-flex justify-content-center align-items-center flex-column">
+                                    <!-- Display default user image -->
+                                    <img src="https://res.cloudinary.com/dxh52itfg/image/upload/v1701915988/SSIS/hjpg2poologu9vx1zxkj.jpg" alt="Student Image" class="img-thumbnail mb-3" width="100px">
+                                    <input type="file" class="form-control" id="image" name="image">
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" onclick="showPage(1)">Previous</button>
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                    <div class="form-group mb-3">
-                        <label for="firstName">First Name</label>
-                        <input type="text" class="form-control" id="firstname" name="firstname" autocomplete="off" placeholder="e.g Ethan">
-                    </div>
-                    <div class="form-group mb-3">
-                        <label for="lastName">Last Name</label>
-                        <input type="text" class="form-control" id="lastname" name="lastname" autocomplete="off" placeholder="e.g Grunt">
-                    </div>
-                    <div class="form-group mb-3">
-                        <label for="course">Course</label>
-                        <select class="form-select" id="course" name="course">
-                            <option disabled selected>--Select Course--</option>
-                            {% for course in courses %}
-                                <option value="{{ course.code }}">{{ course.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label for="year">Year</label>
-                        <select class="form-select" id="year" name="year">
-                            <option disabled selected>--Select Year--</option>
-                            <option value="1st year">1st year</option>
-                            <option value="2nd year">2nd year</option>
-                            <option value="3rd year">3rd year</option>
-                            <option value="4th year">4th year</option>
-                            <option value="Other">Other</option>
-                            
-                        </select>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label for="gender">Gender</label>
-                        <select class="form-select" id="gender" name="gender">
-                            <option disabled selected>--Select Gender--</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>   
-                        </select>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" form="student_form" class="btn btn-success">Save</button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
     </div>
 
     <!-- Update Modal (Student) -->
     {% for student in students %}
-    <div class="modal fade" id="UpdateStudentModal{{ student.id }}" tabindex="-1" role="dialog" aria-labelledby="UpdateStudentModalLabel" aria-hidden="true">
+    <div class="modal fade" id="UpdateStudentModal{{ student.id }}" tabindex="-1" role="dialog" aria-labelledby="UpdateStudentModalLabel{{ student.id }}" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="UpdateStudentModalLabel{{ student.id }}">Edit Student</h5>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="{{ url_for('student_bp.update_student', student_id=student.id) }}">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <div class="form-group">
-                            <label for="update_id">ID</label>
-                            <input type="text" class="form-control" id="update_id" name="id" value="{{ student.id }}" pattern="20\d{2}-\d{4}">
-                        </div>
-                        <div class="form-group">
-                            <label for="update_firstname">First Name</label>
-                            <input type="text" class="form-control" id="update_firstname" name="firstname" value="{{ student.firstname }}">
-                        </div>
-                        <div class="form-group">
-                            <label for="update_lastname">Last Name</label>
-                            <input type="text" class="form-control" id="update_lastname" name="lastname" value="{{ student.lastname }}">
-                        </div>
-                        <div class="form-group">
-                            <label for="update_course">Course</label>
-                            <select class="form-select" id="update_course" name="course">
-                                <option disabled selected>--Select Course--</option>
-                                {% for course in courses %}
-                                    <option value="{{ course.code }}" {% if course.code == student.course %}selected{% endif %}>{{ course.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="update_year">Year</label>
-                            <select class="form-select" id="update_year" name="year">
-                                <option disabled selected>--Select Year--</option>
-                                <option value="1st year" {% if student.year == "1st year" %}selected{% endif %}>1st year</option>
-                                <option value="2nd year" {% if student.year == "2nd year" %}selected{% endif %}>2nd year</option>
-                                <option value="3rd year" {% if student.year == "3rd year" %}selected{% endif %}>3rd year</option>
-                                <option value="4th year" {% if student.year == "4th year" %}selected{% endif %}>4th year</option>
-                                <option value="other" {% if student.year == "other" %}selected{% endif %}>Other</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="update_gender">Gender</label>
-                            <select class="form-select" id="update_gender" name="gender">
-                                <option disabled selected>--Select Gender--</option>
-                                <option value="male" {% if student.gender == "male" %}selected{% endif %}>Male</option>
-                                <option value="female" {% if student.gender == "female" %}selected{% endif %}>Female</option>
-                                <option value="other" {% if student.gender == "other" %}selected{% endif %}>Other</option>
-                            </select>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-warning">Update</button>
-                        </div>
-                    </form>
+                    <!-- Pagination Container -->
+                    <div class="pagination-container">
+                        <!-- Form Starts Here -->
+                        <form method="POST" action="{{ url_for('student_bp.update_student', student_id=student.id) }}" enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                            <!-- Page 1: Student Information -->
+                            <div class="page" id="page1">
+                                <div class="form-group mb-3">
+                                    <label for="update_id">Student ID</label>
+                                    <input type="text" class="form-control" id="update_id" name="id" value="{{ student.id }}" pattern="20\d{2}-\d{4}" required>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="update_firstname">First Name</label>
+                                    <input type="text" class="form-control" id="update_firstname" name="firstname" value="{{ student.firstname }}" required>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="update_lastname">Last Name</label>
+                                    <input type="text" class="form-control" id="update_lastname" name="lastname" value="{{ student.lastname }}" required>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="update_course">Course</label>
+                                    <select class="form-select" id="update_course" name="course" required>
+                                        <option disabled selected value="">--Select Course--</option>
+                                        {% for course in courses %}
+                                            <option value="{{ course.code }}" {% if course.code == student.course %}selected{% endif %}>{{ course.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="update_year">Year</label>
+                                    <select class="form-select" id="update_year" name="year" required>
+                                        <option disabled selected value="">--Select Year--</option>
+                                        <option value="1st year" {% if student.year == "1st year" %}selected{% endif %}>1st year</option>
+                                        <option value="2nd year" {% if student.year == "2nd year" %}selected{% endif %}>2nd year</option>
+                                        <option value="3rd year" {% if student.year == "3rd year" %}selected{% endif %}>3rd year</option>
+                                        <option value="4th year" {% if student.year == "4th year" %}selected{% endif %}>4th year</option>
+                                        <option value="other" {% if student.year == "other" %}selected{% endif %}>Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="update_gender">Gender</label>
+                                    <select class="form-select" id="update_gender" name="gender" required>
+                                        <option disabled selected value="">--Select Gender--</option>
+                                        <option value="male" {% if student.gender == "male" %}selected{% endif %}>Male</option>
+                                        <option value="female" {% if student.gender == "female" %}selected{% endif %}>Female</option>
+                                        <option value="other" {% if student.gender == "other" %}selected{% endif %}>Other</option>
+                                    </select>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" onclick="showPage(2)">Next</button>
+                                </div>
+                            </div>
+
+                            <!-- Page 2: Image Input -->
+                            <div class="page" id="page2" style="display: none;">
+                                <div class="mb-3 text-center">
+                                    <label for="update_image">Image</label>
+                                </div>
+                                <div class="mb-3 d-flex justify-content-center align-items-center flex-column">
+                                    <!-- Display existing user image -->
+                                    <img src="{{ student.image_url }}" alt="Student Image" class="img-thumbnail mb-3" width="100px">
+                                    <input type="file" class="form-control" id="update_image" name="image">
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" onclick="showPage(1)">Previous</button>
+                                    <button type="submit" class="btn btn-warning">Update</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     {% endfor %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Function to handle both "Next" and "Previous" buttons
+            function handlePageNavigation(button, increment) {
+                var modal = button.closest('.modal');
+                var currentPage = parseInt(modal.getAttribute('data-page')) || 1; // Default to 1 if not set
+                var nextPage = currentPage + increment;
+    
+                showPage(modal, nextPage);
+                modal.setAttribute('data-page', nextPage);
+            }
+    
+            // Function to reset modal to page 1 when opened
+            function resetModal(modal) {
+                var nextButtons = modal.querySelectorAll('.modal-footer .btn-primary');
+                nextButtons.forEach(function (button) {
+                    button.setAttribute('data-page', '1');
+                });
+    
+                showPage(modal, 1);
+            }
+    
+            // Function to show a specific page in a modal
+            function showPage(modal, pageNumber) {
+                var pages = modal.getElementsByClassName('page');
+    
+                for (var i = 0; i < pages.length; i++) {
+                    pages[i].style.display = 'none';
+                }
+    
+                pages[pageNumber - 1].style.display = 'block';
+            }
+    
+            // Call this function to show the first page when the Add modal is opened
+            showPage(document.getElementById('Student_Add_Modal'), 1);
+    
+            // Add an event listener for each Update modal
+            var updateModals = document.querySelectorAll('[id^="UpdateStudentModal"]');
+            updateModals.forEach(function (modal) {
+                modal.addEventListener('show.bs.modal', function () {
+                    resetModal(modal);
+                });
+            });
+    
+            // Add an event listener for the "Next" button in each modal
+            var nextButtons = document.querySelectorAll('.modal-footer .btn-primary');
+            nextButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    handlePageNavigation(button, 1);
+                });
+            });
+    
+            // Add an event listener for the "Previous" button in each modal
+            var prevButtons = document.querySelectorAll('.modal-footer .btn-secondary');
+            prevButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    handlePageNavigation(button, -1);
+                });
+            });
+        });
+    </script>
+
 
 {% endblock content %}
 

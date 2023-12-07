@@ -1,9 +1,13 @@
 from app import mysql
 from flask import flash
+from werkzeug.utils import secure_filename
+import os
+from cloudinary import uploader
+from config import CLOUDINARY_FOLDER
 
 class student_model:
     @classmethod
-    def create_student(cls, id, firstname, lastname, course, year, gender):
+    def add_student(cls, id, firstname, lastname, course, year, gender, image_url):
         try:
             cur = mysql.new_cursor(dictionary=True)
 
@@ -14,15 +18,46 @@ class student_model:
                 flash("ID is already taken.", "error")
                 return "Failed to create student"
 
+            # Set the default image URL
+            default_image_url = "https://res.cloudinary.com/dxh52itfg/image/upload/v1701915988/SSIS/hjpg2poologu9vx1zxkj.jpg"
+            
+            # Use the default image URL if the user did not upload a image
+            if image_url is None:
+                image_url = default_image_url
+
             # Insert the new student record
-            cur.execute("INSERT INTO student (id, firstname, lastname, course, year, gender) VALUES (%s, %s, %s, %s, %s, %s)",
-                        (id, firstname, lastname, course, year, gender))
+            cur.execute("INSERT INTO student (id, firstname, lastname, course, year, gender, image_url) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                        (id, firstname, lastname, course, year, gender, image_url))
             mysql.connection.commit()
+            
             return "Student created successfully"
+        
         except Exception as e:
-            flash("Failed to create student.", "error")
+            flash("Failed to create student(models 1).", "error")
             return "Failed to create student"
-    
+        
+    @classmethod
+    def upload_image(cls,image):
+        try:
+            # Ensure the file is allowed
+            allowed_extensions = {'png', 'jpg', 'jpeg'}
+            if '.' in image.filename and image.filename.rsplit('.', 1)[1].lower() in allowed_extensions:
+                # Generate a secure filename
+                filename = secure_filename(image.filename)
+
+                # Upload the file to Cloudinary
+                response = uploader.upload(image, folder=CLOUDINARY_FOLDER)  # Set the folder as needed
+
+                # Return the Cloudinary URL of the uploaded image
+                return response['secure_url']
+
+            flash("Invalid file type. Please upload a valid image file.", "error")
+            return None
+
+        except Exception as e:
+            flash("Failed to upload image.", "error")
+            return None
+        
     @classmethod
     def get_students(cls):
         cur = mysql.new_cursor(dictionary=True)
